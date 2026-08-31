@@ -44,8 +44,6 @@ jobs:
           targets: ${{ matrix.target }}
 
       - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: target/${{ matrix.target }}
 
       - name: Install cross (for cross-compiled Linux targets)
         if: matrix.use-cross
