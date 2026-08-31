@@ -3,11 +3,11 @@ use crate::ui;
 use anyhow::Result;
 use rusqlite::Connection;
 
-/// Handle saving a note to the SQLite database
+/// Handle saving a command to the SQLite database
 pub fn handle(conn: &Connection, content: &str) -> Result<()> {
     let trimmed = content.trim();
     if trimmed.is_empty() {
-        anyhow::bail!("Note content cannot be empty.");
+        anyhow::bail!("Command content cannot be empty.");
     }
 
     let id = db::save_note(conn, trimmed)?;

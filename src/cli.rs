@@ -4,44 +4,44 @@ use clap::Parser;
 #[command(
     name = "recall",
     version,
-    about = "A lightweight CLI note capture and clipboard utility",
-    long_about = "Recall is a minimal CLI notes manager. It stores notes in a local SQLite database, lists them ordered by recency, and allows copying or deleting notes by their displayed index number.",
+    about = "A lightweight CLI terminal command memory and clipboard utility",
+    long_about = "Recall is a minimal CLI command memory tool. It stores the terminal commands you want to remember in a local SQLite database, lists them ordered by recency, and allows copying or deleting commands by their displayed index number.",
     group = clap::ArgGroup::new("action").multiple(false)
 )]
 pub struct Cli {
-    /// Save a new note
+    /// Save a new command
     #[arg(
         short,
         long,
         value_name = "TEXT",
-        help = "Save a new note to the database",
+        help = "Save a new command to the database",
         group = "action"
     )]
     pub save: Option<String>,
 
-    /// Delete a note by its displayed index
+    /// Delete a command by its displayed index
     #[arg(
         short,
         long,
         value_name = "INDEX",
-        help = "Delete a note from the database by its displayed list number",
+        help = "Delete a command from the database by its displayed list number",
         group = "action"
     )]
     pub delete: Option<usize>,
 
-    /// Skip confirmation prompt when deleting a note (use with --delete)
+    /// Skip confirmation prompt when deleting a command (use with --delete)
     #[arg(
         short,
         long,
-        help = "Skip confirmation prompt when deleting a note",
+        help = "Skip confirmation prompt when deleting a command",
         requires = "delete"
     )]
     pub force: bool,
 
-    /// Copy a note to clipboard by its displayed index (1-based)
+    /// Copy a command to clipboard by its displayed index (1-based)
     #[arg(
         value_name = "INDEX",
-        help = "Copy the contents of a note to the clipboard by its displayed list number",
+        help = "Copy the contents of a command to the clipboard by its displayed list number",
         group = "action"
     )]
     pub copy: Option<usize>,

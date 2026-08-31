@@ -1,9 +1,9 @@
 [package]
 name = "recall"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 authors = ["Gopinath Venkatesh <gvenkatesh@example.com>"]
-description = "A lightweight CLI note capture and clipboard utility."
+description = "A lightweight CLI terminal command memory and clipboard utility."
 license = "MIT"
 readme = "README.md"
 homepage = "https://GVenkatesh-12.github.io/recall/"

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>recall — instant notes from your terminal</title>
-<meta name="description" content="recall is a lightweight, local-first note capture and clipboard utility for the terminal. Install it anywhere with a single curl command.">
+<title>recall — command memory for your terminal</title>
+<meta name="description" content="recall is a lightweight, local-first terminal command memory and clipboard utility. Remember the commands you always forget and install it anywhere with a single curl command.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
 <style>
   :root {
@@ -127,7 +127,7 @@
 <main class="container">
   <section class="hero">
     <h1>recall<span class="caret">_</span></h1>
-    <p class="tagline">A modern, lightweight note capture &amp; clipboard utility for your terminal. Local-first, SQLite-backed, and installable anywhere with one command.</p>
+    <p class="tagline">A modern, lightweight <b>terminal command memory</b> utility. Remember the commands you always forget, copy them with one keystroke, and get back to work. Local-first, SQLite-backed, and installable anywhere with one command.</p>
     <div class="badges">
       <img src="https://img.shields.io/github/v/release/GVenkatesh-12/recall?style=flat&label=release" alt="GitHub release">
       <img src="https://img.shields.io/github/release-date/GVenkatesh-12/recall?style=flat&label=released" alt="Release date">
@@ -147,8 +147,9 @@
   <section id="features">
     <h2>Features</h2>
     <ul class="features">
-      <li><b>Local storage</b> — notes live in a single-user SQLite database at <code>~/.recall/recall.db</code>. Nothing leaves your machine.</li>
-      <li><b>Clipboard integration</b> — copy any saved note straight to your system clipboard.</li>
+      <li><b>Command memory</b> — keep the git, docker, ssh, and find commands you rarely remember, and recall them instantly.</li>
+      <li><b>Local storage</b> — your commands live in a single-user SQLite database at <code>~/.recall/recall.db</code>. Nothing leaves your machine.</li>
+      <li><b>Clipboard integration</b> — copy any saved command straight to your system clipboard and paste to run.</li>
       <li><b>Stateless mapping</b> — refer to notes by their simple displayed index (<code>1</code>, <code>2</code>, …) when copying or deleting.</li>
       <li><b>Beautiful UX</b> — color hierarchy, unicode decorators, and clean table layout.</li>
       <li><b>Cross-platform</b> — prebuilt binaries for Linux, macOS, and Windows (x86_64 &amp; arm64).</li>
@@ -191,23 +192,23 @@
 
     <div class="usage">
       <p><code>recall</code>
-        <span style="color:var(--fg-dim)">  # list all notes (most recent first)</span></p>
-      <p><code>recall -s "Buy milk"</code>
-        <span style="color:var(--fg-dim)">  # save a note</span></p>
+        <span style="color:var(--fg-dim)">  # list saved commands (most recent first)</span></p>
+      <p><code>recall -s 'git commit -am "fix: cache bug"'</code>
+        <span style="color:var(--fg-dim)">  # remember a command</span></p>
       <p><code>recall 2</code>
-        <span style="color:var(--fg-dim)">  # copy note #2 to the clipboard</span></p>
+        <span style="color:var(--fg-dim)">  # copy command #2 to the clipboard</span></p>
       <p><code>recall -d 2</code>
-        <span style="color:var(--fg-dim)">  # delete note #2 (with confirmation)</span></p>
+        <span style="color:var(--fg-dim)">  # delete command #2 (with confirmation)</span></p>
       <p><code>recall -d 2 --force</code>
         <span style="color:var(--fg-dim)">  # delete without confirmation</span></p>
     </div>
 
     <span class="term">
       <span class="title">~/dev — zsh — 80×24</span>
-<pre><span class="dim">$</span> recall -s <span class="pk">"Finish GATE Network Theory revision"</span>
+<pre><span class="dim">$</span> recall -s <span class="pk">'git commit -am "fix: cache invalidation bug"'</span>
 <span class="c">✓ Saved note #1</span>
 
-<span class="dim">$</span> recall -s <span class="pk">"Learn Rust ownership"</span>
+<span class="dim">$</span> recall -s <span class="pk">'find . -type f -name "*.log" | xargs wc -l'</span>
 <span class="c">✓ Saved note #2</span>
 
 <span class="dim">$</span> recall
@@ -215,8 +216,8 @@
  <span class="pk">Recall Notes</span>
  <span class="dim">──────────────────────────────────────────────────</span>
 
- <span class="pk">1</span>  Finish GATE Network Theory revision
- <span class="pk">2</span>  Learn Rust ownership
+ <span class="pk">1</span>  find . -type f -name "*.log" | xargs wc -l
+ <span class="pk">2</span>  git commit -am "fix: cache invalidation bug"
 
  <span class="dim">──────────────────────────────────────────────────</span>
  Total: 2 notes
@@ -224,7 +225,7 @@
 <span class="dim">$</span> recall 2
 <span class="c">✓ Copied to clipboard</span>
 
-Learn Rust ownership</pre>
+git commit -am "fix: cache invalidation bug"</pre>
     </span>
   </section>
 </main>

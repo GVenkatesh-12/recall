@@ -1,8 +1,8 @@
 # Recall
 
-A modern, lightweight note capture and clipboard utility for the terminal.
+A modern, lightweight **terminal command memory and clipboard utility** for the terminal.
 
-Built in Rust, `recall` is designed to be fast, minimal, and run completely locally on your system. It is stored in a SQLite database and provides a sleek terminal interface with colored accents.
+Ever Google the same command twice? `recall` remembers the commands you want to keep — store them, list them, copy them to your clipboard, all from your shell. Built in Rust, `recall` is designed to be fast, minimal, and run completely locally on your system. It is stored in a SQLite database and provides a sleek terminal interface with colored accents.
 
 <div align="center">
 
@@ -19,8 +19,9 @@ Built in Rust, `recall` is designed to be fast, minimal, and run completely loca
 
 ## Features
 
+- **Command Memory**: Save the terminal commands you rarely remember (git, docker, ssh, find — anything) and recall them instantly.
 - **Local Storage**: Notes are persisted in a single-user local SQLite database at `~/.recall/recall.db`.
-- **Clipboard Integration**: Instantly copy saved notes to your system clipboard.
+- **Clipboard Integration**: Instantly copy saved terminal commands to your system clipboard — paste and run.
 - **Beautiful UX**: Polished console output with color hierarchy, unicode decorators, and table layout dividers.
 - **Stateless Mapping**: Refer to notes by their simple displayed index when copying or deleting.
 - **Cross-Platform**: Support for Linux, macOS, and Windows.
@@ -106,19 +107,19 @@ recall
  Recall Notes
  ──────────────────────────────────────────────────
 
- 1  Buy milk
- 2  Finish GATE Network Theory revision
- 3  Learn Rust ownership
+ 1  ssh -i ~/.ssh/id_ed25519 deploy@server
+ 2  find . -type f -name '*.log' -size +10M
+ 3  git commit -am "fix: cache invalidation bug"
 
  ──────────────────────────────────────────────────
  Total: 3 notes
 ```
 
-### 2. Save a Note
-Use `-s` or `--save` to add a new note.
+### 2. Save a Command
+Use `-s` or `--save` to add a new terminal command.
 
 ```bash
-recall -s "Learn Rust ownership"
+recall -s 'git commit -am "fix: cache invalidation bug"'
 ```
 
 **Output:**
@@ -126,7 +127,7 @@ recall -s "Learn Rust ownership"
 ✓ Saved note #3
 ```
 
-### 3. Copy a Note
+### 3. Copy a Command
 Provide the displayed list index to copy its full contents to your clipboard.
 
 ```bash
@@ -137,7 +138,7 @@ recall 3
 ```text
 ✓ Copied to clipboard
 
-Learn Rust ownership
+git commit -am "fix: cache invalidation bug"
 ```
 
 ### 4. Delete a Note
