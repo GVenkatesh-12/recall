@@ -121,6 +121,12 @@ main() {
 
     say "Verifying SHA-256 checksum ..."
     (cd "$tmpdir"
+     # normalise the checksum file: strip any leading directory paths
+     # so it always references the bare asset filename
+     if command -v sed >/dev/null 2>&1; then
+         sed -i.bak -E 's#^([0-9a-fA-F]{64})[[:space:]]+(.*/)?([^[:space:]]+)$#\1  \3#' "${asset_name}.sha256" 2>/dev/null \
+             && rm -f "${asset_name}.sha256.bak" || true
+     fi
      if command -v sha256sum >/dev/null 2>&1; then
          sha256sum -c "${asset_name}.sha256"
      elif command -v shasum >/dev/null 2>&1; then
