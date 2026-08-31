@@ -70,7 +70,7 @@ Grab the archive plus its `.sha256` file from the [latest release](https://githu
 ```bash
 # Example: Linux x86_64
 curl -fsSL -o recall.tar.gz \
-  https://github.com/GVenkatesh-12/recall/releases/download/v1.0.0/recall-x86_64-unknown-linux-gnu.tar.gz
+  https://github.com/GVenkatesh-12/recall/releases/download/v1.0.1/recall-x86_64-unknown-linux-gnu.tar.gz
 tar -xzf recall.tar.gz
 ./recall --version
 ```
