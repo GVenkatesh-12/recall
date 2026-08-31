@@ -89,6 +89,12 @@ pub fn get_note_by_offset(conn: &Connection, offset: usize) -> Result<Option<Not
     }
 }
 
+/// Count the total number of notes currently in the database
+pub fn count_notes(conn: &Connection) -> Result<i64> {
+    conn.query_row("SELECT COUNT(*) FROM notes", [], |row| row.get(0))
+        .context("Failed to count notes in database")
+}
+
 /// Delete a note by its unique auto-increment database ID
 pub fn delete_note_by_id(conn: &Connection, id: i64) -> Result<()> {
     let rows_affected = conn
@@ -156,6 +162,41 @@ mod tests {
 
         let note3 = get_note_by_offset(&conn, 3)?;
         assert!(note3.is_none());
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_count() -> Result<()> {
+        let conn = init_in_memory_db()?;
+        assert_eq!(count_notes(&conn)?, 0);
+
+        save_note(&conn, "First")?;
+        assert_eq!(count_notes(&conn)?, 1);
+
+        save_note(&conn, "Second")?;
+        assert_eq!(count_notes(&conn)?, 2);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_count_after_delete() -> Result<()> {
+        // Regression test: deleting notes must not make the count keep increasing
+        let conn = init_in_memory_db()?;
+        save_note(&conn, "One")?;
+        save_note(&conn, "Two")?;
+        save_note(&conn, "Three")?;
+        assert_eq!(count_notes(&conn)?, 3);
+
+        // Delete one note (by its database id) and count again
+        let notes = list_notes(&conn)?;
+        delete_note_by_id(&conn, notes[0].id)?;
+        assert_eq!(count_notes(&conn)?, 2);
+
+        // Save again: count reflects live rows, not the ever-increasing rowid
+        save_note(&conn, "Four")?;
+        assert_eq!(count_notes(&conn)?, 3);
 
         Ok(())
     }

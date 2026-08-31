@@ -10,7 +10,8 @@ pub fn handle(conn: &Connection, content: &str) -> Result<()> {
         anyhow::bail!("Command content cannot be empty.");
     }
 
-    let id = db::save_note(conn, trimmed)?;
-    ui::print_success(&format!("Saved note #{}", id));
+    db::save_note(conn, trimmed)?;
+    let total = db::count_notes(conn)?;
+    ui::print_success(&format!("Saved note #{}", total));
     Ok(())
 }
