@@ -1,8 +1,8 @@
-use anyhow::Result;
-use rusqlite::Connection;
 use crate::db;
 use crate::ui;
+use anyhow::Result;
 use inquire::Confirm;
+use rusqlite::Connection;
 
 /// Handle deleting a note by its displayed index
 pub fn handle(conn: &Connection, index: usize, force: bool) -> Result<()> {
@@ -10,10 +10,10 @@ pub fn handle(conn: &Connection, index: usize, force: bool) -> Result<()> {
         ui::print_error("Invalid note number. Numbers start from 1.");
         return Ok(());
     }
-    
+
     let offset = index - 1;
     let note_opt = db::get_note_by_offset(conn, offset)?;
-    
+
     match note_opt {
         Some(note) => {
             let should_delete = if force {
@@ -24,7 +24,7 @@ pub fn handle(conn: &Connection, index: usize, force: bool) -> Result<()> {
                     .prompt()
                     .unwrap_or(false)
             };
-            
+
             if should_delete {
                 db::delete_note_by_id(conn, note.id)?;
                 ui::print_success(&format!("Deleted note #{}", index));
@@ -36,6 +36,6 @@ pub fn handle(conn: &Connection, index: usize, force: bool) -> Result<()> {
             ui::print_error(&format!("Note #{} does not exist", index));
         }
     }
-    
+
     Ok(())
 }

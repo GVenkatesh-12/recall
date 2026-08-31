@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>recall — instant notes from your terminal</title>
+<meta name="description" content="recall is a lightweight, local-first note capture and clipboard utility for the terminal. Install it anywhere with a single curl command.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg-soft: #161b22;
+    --border: #30363d;
+    --fg: #e6edf3;
+    --fg-dim: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 20px 0; border-bottom: 1px solid var(--border);
+  }
+  .logo { font-size: 26px; }
+  .brand { font-weight: 700; font-size: 20px; letter-spacing: .3px; }
+  .brand span { color: var(--accent); }
+  nav { margin-left: auto; display: flex; gap: 18px; }
+  nav a { color: var(--fg-dim); text-decoration: none; font-size: 14px; }
+  nav a:hover { color: var(--accent); }
+  .hero { padding: 56px 0 40px; text-align: center; }
+  .hero h1 { font-size: 42px; font-weight: 800; letter-spacing: -.5px; margin-bottom: 12px; }
+  .hero h1 .caret { color: var(--green); }
+  .tagline { color: var(--fg-dim); font-size: 18px; max-width: 640px; margin: 0 auto 28px; }
+  .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px; }
+  .badges img { height: 22px; border-radius: 6px; }
+  .install-card {
+    background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px 20px; text-align: left; max-width: 620px; margin: 0 auto;
+  }
+  .install-card .label { font-family: var(--mono); font-size: 12px; color: var(--green); margin-bottom: 8px; user-select: none; }
+  .cmd {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: #010409; border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px;
+  }
+  .cmd code { font-family: var(--mono); font-size: 13px; color: var(--fg); word-break: break-all; }
+  .cmd code .dollar { color: var(--green); }
+  .copy-btn {
+    background: var(--accent); color: #010409; border: none; border-radius: 6px;
+    padding: 7px 14px; font-family: var(--mono); font-size: 12px; font-weight: 700; cursor: pointer;
+    white-space: nowrap; transition: transform .05s;
+  }
+  .copy-btn:active { transform: scale(.96); }
+  .copy-btn.copied { background: var(--green); }
+  h2 {
+    font-size: 22px; margin: 44px 0 14px; padding-left: 12px;
+    border-left: 4px solid var(--accent); font-weight: 700;
+  }
+  h2::before { content: "# "; color: var(--fg-dim); font-weight: 400; }
+  p.lead { color: var(--fg-dim); margin-bottom: 16px; font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 12px; border: 1px solid var(--border); }
+  th { background: var(--bg-soft); color: var(--fg-dim); font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+  td code { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .os-cmds, .usage {
+    background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 20px; margin: 12px 0 20px;
+  }
+  .os-cmds p, .usage p { margin-bottom: 8px; }
+  .os-cmds p code, .usage p code {
+    font-family: var(--mono); font-size: 13px; color: var(--green);
+    background: #010409; border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px;
+  }
+  .term { display: block; background: #010409; border: 1px solid var(--border); border-radius: 8px; margin: 8px 0 16px; overflow-x: auto; }
+  .term .title { font-family: var(--mono); font-size: 11px; color: var(--fg-dim); padding: 8px 14px; border-bottom: 1px solid var(--border); }
+  .term pre { padding: 14px 16px; font-family: var(--mono); font-size: 13px; line-height: 1.7; overflow-x: auto; }
+  .term .c { color: var(--green); }
+  .term .dim { color: var(--fg-dim); }
+  .term .pk { color: var(--accent); }
+  .term .yl { color: var(--yellow); }
+  ul.features { list-style: none; margin: 12px 0 20px; }
+  ul.features li { padding: 6px 0; color: var(--fg); font-size: 15px; }
+  ul.features li::before { content: "▸ "; color: var(--accent); }
+  ul.features li b { color: var(--green); font-weight: 600; }
+  .note {
+    background: rgba(210, 153, 34, .08); border: 1px solid rgba(210, 153, 34, .35);
+    border-radius: 8px; padding: 12px 16px; font-size: 14px; color: var(--fg-dim); margin: 12px 0 20px;
+  }
+  .note code { font-family: var(--mono); color: var(--yellow); font-size: 13px; }
+  .term code, .note code, .usage code, .os-cmds code { font-family: var(--mono); }
+  footer { border-top: 1px solid var(--border); margin-top: 56px; padding: 22px 0 40px; text-align: center; color: var(--fg-dim); font-size: 13px; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  main a { color: var(--accent); }
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 30px; }
+    nav { display: none; }
+    .cmd code { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="container" style="display:flex;align-items:center;gap:14px;width:100%;max-width:880px;">
+    <span class="logo">🧠</span>
+    <span class="brand">recall<span>_</span></span>
+    <nav>
+      <a href="#install">Install</a>
+      <a href="#usage">Usage</a>
+      <a href="https://github.com/GVenkatesh-12/recall">GitHub</a>
+      <a href="https://github.com/GVenkatesh-12/recall/releases">Releases</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <h1>recall<span class="caret">_</span></h1>
+    <p class="tagline">A modern, lightweight note capture &amp; clipboard utility for your terminal. Local-first, SQLite-backed, and installable anywhere with one command.</p>
+    <div class="badges">
+      <img src="https://img.shields.io/github/v/release/GVenkatesh-12/recall?style=flat&label=release" alt="GitHub release">
+      <img src="https://img.shields.io/github/release-date/GVenkatesh-12/recall?style=flat&label=released" alt="Release date">
+      <img src="https://img.shields.io/github/license/GVenkatesh-12/recall?style=flat" alt="License">
+      <img src="https://img.shields.io/github/actions/workflow/status/GVenkatesh-12/recall/ci.yml?style=flat&label=ci" alt="CI">
+      <img src="https://img.shields.io/badge/platform-linux%20%7C%20macOS%20%7C%20windows-58a6ff?style=flat" alt="Platforms">
+    </div>
+    <div class="install-card">
+      <div class="label">$ one-line install — works on Linux, macOS &amp; Windows (Git Bash)</div>
+      <div class="cmd">
+        <code><span class="dollar">$</span> curl -fsSL https://GVenkatesh-12.github.io/recall/install.sh | bash</code>
+        <button class="copy-btn" data-copy="curl -fsSL https://GVenkatesh-12.github.io/recall/install.sh | bash">Copy</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <h2>Features</h2>
+    <ul class="features">
+      <li><b>Local storage</b> — notes live in a single-user SQLite database at <code>~/.recall/recall.db</code>. Nothing leaves your machine.</li>
+      <li><b>Clipboard integration</b> — copy any saved note straight to your system clipboard.</li>
+      <li><b>Stateless mapping</b> — refer to notes by their simple displayed index (<code>1</code>, <code>2</code>, …) when copying or deleting.</li>
+      <li><b>Beautiful UX</b> — color hierarchy, unicode decorators, and clean table layout.</li>
+      <li><b>Cross-platform</b> — prebuilt binaries for Linux, macOS, and Windows (x86_64 &amp; arm64).</li>
+    </ul>
+  </section>
+
+  <section id="install">
+    <h2>Install</h2>
+    <p class="lead">The installer downloads the latest release binary, verifies its SHA-256 checksum, and places it on your PATH — no build tools required.</p>
+
+    <div class="os-cmds">
+      <p><code># Linux / macOS / Windows (Git Bash)</code></p>
+      <p><code>curl -fsSL https://GVenkatesh-12.github.io/recall/install.sh | bash</code></p>
+    </div>
+
+<p class="lead">Prefer downloading the binary yourself? Grab a <code>recall-&lt;target&gt;.tar.gz</code>/<code>.zip</code> plus its <code>.sha256</code> from the <a href="https://github.com/GVenkatesh-12/recall/releases">latest release</a>:</p>
+
+    <table>
+      <tr><th>Platform</th><th>Asset</th></tr>
+      <tr><td>Linux · x86_64</td><td><code>recall-x86_64-unknown-linux-gnu.tar.gz</code></td></tr>
+      <tr><td>Linux · arm64</td><td><code>recall-aarch64-unknown-linux-gnu.tar.gz</code></td></tr>
+      <tr><td>macOS · Intel</td><td><code>recall-x86_64-apple-darwin.tar.gz</code></td></tr>
+      <tr><td>macOS · Apple Silicon</td><td><code>recall-aarch64-apple-darwin.tar.gz</code></td></tr>
+      <tr><td>Windows · x86_64</td><td><code>recall-x86_64-pc-windows-msvc.zip</code></td></tr>
+    </table>
+
+    <p class="lead">Or build from source:</p>
+    <div class="os-cmds">
+      <p><code>git clone https://github.com/GVenkatesh-12/recall.git</code></p>
+      <p><code>cd recall && cargo install --path .</code></p>
+    </div>
+
+    <div class="note">
+      💡 On Linux, ensure X11 or Wayland is available for clipboard support. Everything else (including SQLite) is bundled — no extra system packages needed.
+    </div>
+  </section>
+<section id="usage">
+    <h2>Quick start</h2>
+    <p class="lead">All commands below work immediately after installing — <code>recall</code> creates <code>~/.recall/recall.db</code> automatically on first run.</p>
+
+    <div class="usage">
+      <p><code>recall</code>
+        <span style="color:var(--fg-dim)">  # list all notes (most recent first)</span></p>
+      <p><code>recall -s "Buy milk"</code>
+        <span style="color:var(--fg-dim)">  # save a note</span></p>
+      <p><code>recall 2</code>
+        <span style="color:var(--fg-dim)">  # copy note #2 to the clipboard</span></p>
+      <p><code>recall -d 2</code>
+        <span style="color:var(--fg-dim)">  # delete note #2 (with confirmation)</span></p>
+      <p><code>recall -d 2 --force</code>
+        <span style="color:var(--fg-dim)">  # delete without confirmation</span></p>
+    </div>
+
+    <span class="term">
+      <span class="title">~/dev — zsh — 80×24</span>
+<pre><span class="dim">$</span> recall -s <span class="pk">"Finish GATE Network Theory revision"</span>
+<span class="c">✓ Saved note #1</span>
+
+<span class="dim">$</span> recall -s <span class="pk">"Learn Rust ownership"</span>
+<span class="c">✓ Saved note #2</span>
+
+<span class="dim">$</span> recall
+
+ <span class="pk">Recall Notes</span>
+ <span class="dim">──────────────────────────────────────────────────</span>
+
+ <span class="pk">1</span>  Finish GATE Network Theory revision
+ <span class="pk">2</span>  Learn Rust ownership
+
+ <span class="dim">──────────────────────────────────────────────────</span>
+ Total: 2 notes
+
+<span class="dim">$</span> recall 2
+<span class="c">✓ Copied to clipboard</span>
+
+Learn Rust ownership</pre>
+    </span>
+  </section>
+</main>
+
+<footer>
+  <p><a href="https://github.com/GVenkatesh-12/recall">recall on GitHub</a> · <a href="https://github.com/GVenkatesh-12/recall/releases">releases</a> · MIT License</p>
+</footer>
+
+<script>
+  document.querySelectorAll(".copy-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var cmd = btn.getAttribute("data-copy") || "";
+      var done = function () {
+        btn.textContent = "Copied ✓";
+        btn.classList.add("copied");
+        setTimeout(function () {
+          btn.textContent = "Copy";
+          btn.classList.remove("copied");
+        }, 1600);
+      };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(cmd).then(done, function () { fallback(); });
+      } else { fallback(); }
+      function fallback() {
+        var ta = document.createElement("textarea");
+        ta.value = cmd;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    });
+  });
+</script>
+</body>
+</html>

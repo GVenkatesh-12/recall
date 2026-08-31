@@ -57,9 +57,15 @@ mod tests {
     #[test]
     fn test_truncate_note() {
         assert_eq!(truncate_note("Short note", 20), "Short note");
-        assert_eq!(truncate_note("A very long note that exceeds limit", 10), "A very lon...");
+        assert_eq!(
+            truncate_note("A very long note that exceeds limit", 10),
+            "A very lon..."
+        );
         assert_eq!(truncate_note("Line one\nLine two", 20), "Line one...");
-        assert_eq!(truncate_note("Line one that is long\nLine two", 5), "Line ...");
+        assert_eq!(
+            truncate_note("Line one that is long\nLine two", 5),
+            "Line ..."
+        );
         assert_eq!(truncate_note("", 20), "");
     }
 }

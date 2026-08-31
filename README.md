@@ -4,6 +4,17 @@ A modern, lightweight note capture and clipboard utility for the terminal.
 
 Built in Rust, `recall` is designed to be fast, minimal, and run completely locally on your system. It is stored in a SQLite database and provides a sleek terminal interface with colored accents.
 
+<div align="center">
+
+[![Release](https://img.shields.io/github/v/release/GVenkatesh-12/recall?style=flat&label=release)](https://github.com/GVenkatesh-12/recall/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/GVenkatesh-12/recall/ci.yml?style=flat&label=ci)](https://github.com/GVenkatesh-12/recall/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/GVenkatesh-12/recall?style=flat)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-linux%20%7C%20macOS%20%7C%20windows-58a6ff?style=flat)](#installation)
+
+</div>
+
+🌐 **Website:** [https://GVenkatesh-12.github.io/recall/](https://GVenkatesh-12.github.io/recall/)
+
 ---
 
 ## Features
@@ -18,9 +29,52 @@ Built in Rust, `recall` is designed to be fast, minimal, and run completely loca
 
 ## Installation
 
-### From crates.io
+### One-line install (recommended)
 
-To install the latest release of `recall` from crates.io:
+Download the latest prebuilt binary for your OS/architecture, verify its SHA-256 checksum, and install it — no build tools required:
+
+```bash
+curl -fsSL https://GVenkatesh-12.github.io/recall/install.sh | bash
+```
+
+The installer works on Linux, macOS, and Windows (Git Bash / MSYS2). It detects your platform automatically and installs to `~/.local/bin` (falling back to `sudo` + `/usr/local/bin` if needed).
+
+Customize the installer with environment variables:
+
+| Variable | Description | Default |
+| --- | --- | --- |
+| `RECALL_VERSION` | Version tag to install | `latest` |
+| `RECALL_INSTALL_DIR` | Install directory | `$HOME/.local/bin` |
+
+```bash
+# Pin a specific version
+RECALL_VERSION=v1.0.0 curl -fsSL https://GVenkatesh-12.github.io/recall/install.sh | bash
+
+# Install to a custom directory
+RECALL_INSTALL_DIR=~/bin curl -fsSL https://GVenkatesh-12.github.io/recall/install.sh | bash
+```
+
+### Manual download
+
+Grab the archive plus its `.sha256` file from the [latest release](https://github.com/GVenkatesh-12/recall/releases):
+
+| Platform | Asset |
+| --- | --- |
+| Linux · x86_64 | `recall-x86_64-unknown-linux-gnu.tar.gz` |
+| Linux · arm64 | `recall-aarch64-unknown-linux-gnu.tar.gz` |
+| macOS · Intel | `recall-x86_64-apple-darwin.tar.gz` |
+| macOS · Apple Silicon | `recall-aarch64-apple-darwin.tar.gz` |
+| Windows · x86_64 | `recall-x86_64-pc-windows-msvc.zip` |
+
+```bash
+# Example: Linux x86_64
+curl -fsSL -o recall.tar.gz \
+  https://github.com/GVenkatesh-12/recall/releases/download/v1.0.0/recall-x86_64-unknown-linux-gnu.tar.gz
+tar -xzf recall.tar.gz
+./recall --version
+```
+
+### From crates.io
 
 ```bash
 cargo install recall
@@ -28,10 +82,8 @@ cargo install recall
 
 ### From Source
 
-Clone the repository and build using Cargo:
-
 ```bash
-git clone https://github.com/gvenkatesh/recall.git
+git clone https://github.com/GVenkatesh-12/recall.git
 cd recall
 cargo install --path .
 ```

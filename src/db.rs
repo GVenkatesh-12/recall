@@ -1,8 +1,8 @@
-use std::fs;
-use std::path::PathBuf;
+use crate::models::Note;
 use anyhow::{Context, Result};
 use rusqlite::Connection;
-use crate::models::Note;
+use std::fs;
+use std::path::PathBuf;
 
 /// Resolve the path for the database folder (~/.recall)
 pub fn get_db_path() -> Result<PathBuf> {
@@ -16,11 +16,11 @@ pub fn init_db() -> Result<Connection> {
     let db_dir = get_db_path()?;
     fs::create_dir_all(&db_dir)
         .with_context(|| format!("Failed to create database directory: {}", db_dir.display()))?;
-    
+
     let db_path = db_dir.join("recall.db");
     let conn = Connection::open(&db_path)
         .with_context(|| format!("Failed to open SQLite database at: {}", db_path.display()))?;
-    
+
     // Automatically create the notes table if it does not exist
     conn.execute(
         "CREATE TABLE IF NOT EXISTS notes (
@@ -29,35 +29,36 @@ pub fn init_db() -> Result<Connection> {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )",
         [],
-    ).context("Failed to initialize database schema")?;
-    
+    )
+    .context("Failed to initialize database schema")?;
+
     Ok(conn)
 }
 
 /// Save a note text to the database
 pub fn save_note(conn: &Connection, content: &str) -> Result<i64> {
-    conn.execute(
-        "INSERT INTO notes (content) VALUES (?1)",
-        [content],
-    ).context("Failed to save note to database")?;
-    
+    conn.execute("INSERT INTO notes (content) VALUES (?1)", [content])
+        .context("Failed to save note to database")?;
+
     Ok(conn.last_insert_rowid())
 }
 
 /// List all notes in the database sorted by id DESC (most recent first)
 pub fn list_notes(conn: &Connection) -> Result<Vec<Note>> {
-    let mut stmt = conn.prepare(
-        "SELECT id, content, created_at FROM notes ORDER BY id DESC"
-    ).context("Failed to prepare select query")?;
-    
-    let note_iter = stmt.query_map([], |row| {
-        Ok(Note {
-            id: row.get(0)?,
-            content: row.get(1)?,
-            created_at: row.get(2)?,
+    let mut stmt = conn
+        .prepare("SELECT id, content, created_at FROM notes ORDER BY id DESC")
+        .context("Failed to prepare select query")?;
+
+    let note_iter = stmt
+        .query_map([], |row| {
+            Ok(Note {
+                id: row.get(0)?,
+                content: row.get(1)?,
+                created_at: row.get(2)?,
+            })
         })
-    }).context("Failed to execute select query")?;
-    
+        .context("Failed to execute select query")?;
+
     let mut notes = Vec::new();
     for note in note_iter {
         notes.push(note?);
@@ -67,18 +68,20 @@ pub fn list_notes(conn: &Connection) -> Result<Vec<Note>> {
 
 /// Retrieve a note by its 0-based offset from the DESC sorted list of notes
 pub fn get_note_by_offset(conn: &Connection, offset: usize) -> Result<Option<Note>> {
-    let mut stmt = conn.prepare(
-        "SELECT id, content, created_at FROM notes ORDER BY id DESC LIMIT 1 OFFSET ?1"
-    ).context("Failed to prepare offset select query")?;
-    
-    let mut note_iter = stmt.query_map([offset], |row| {
-        Ok(Note {
-            id: row.get(0)?,
-            content: row.get(1)?,
-            created_at: row.get(2)?,
+    let mut stmt = conn
+        .prepare("SELECT id, content, created_at FROM notes ORDER BY id DESC LIMIT 1 OFFSET ?1")
+        .context("Failed to prepare offset select query")?;
+
+    let mut note_iter = stmt
+        .query_map([offset], |row| {
+            Ok(Note {
+                id: row.get(0)?,
+                content: row.get(1)?,
+                created_at: row.get(2)?,
+            })
         })
-    }).context("Failed to execute offset select query")?;
-    
+        .context("Failed to execute offset select query")?;
+
     if let Some(note) = note_iter.next() {
         Ok(Some(note?))
     } else {
@@ -88,15 +91,14 @@ pub fn get_note_by_offset(conn: &Connection, offset: usize) -> Result<Option<Not
 
 /// Delete a note by its unique auto-increment database ID
 pub fn delete_note_by_id(conn: &Connection, id: i64) -> Result<()> {
-    let rows_affected = conn.execute(
-        "DELETE FROM notes WHERE id = ?1",
-        [id],
-    ).context("Failed to execute delete query")?;
-    
+    let rows_affected = conn
+        .execute("DELETE FROM notes WHERE id = ?1", [id])
+        .context("Failed to execute delete query")?;
+
     if rows_affected == 0 {
         anyhow::bail!("Note with ID {} does not exist", id);
     }
-    
+
     Ok(())
 }
 

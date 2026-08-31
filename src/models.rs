@@ -4,4 +4,3 @@ pub struct Note {
     pub content: String,
     pub created_at: String,
 }
-

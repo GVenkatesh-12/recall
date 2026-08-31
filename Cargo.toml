@@ -1,12 +1,13 @@
 [package]
 name = "recall"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
 authors = ["Gopinath Venkatesh <gvenkatesh@example.com>"]
 description = "A lightweight CLI note capture and clipboard utility."
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/gvenkatesh/recall"
+homepage = "https://GVenkatesh-12.github.io/recall/"
+repository = "https://github.com/GVenkatesh-12/recall"
 keywords = ["note", "capture", "clipboard", "sqlite", "cli"]
 categories = ["command-line-utilities"]
 
@@ -18,4 +19,9 @@ dirs = "5.0"
 colored = "2.1"
 anyhow = "1.0"
 inquire = "0.7"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
 

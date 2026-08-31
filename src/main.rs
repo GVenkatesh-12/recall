@@ -1,9 +1,9 @@
 mod cli;
+mod clipboard;
+mod commands;
 mod db;
 mod models;
-mod clipboard;
 mod ui;
-mod commands;
 
 use anyhow::Result;
 use cli::Cli;
@@ -19,10 +19,10 @@ fn main() {
 fn run() -> Result<()> {
     // Parse CLI arguments
     let args = Cli::parse_args();
-    
+
     // Establish DB connection and run migrations
     let conn = db::init_db()?;
-    
+
     // Route command execution
     if let Some(ref text) = args.save {
         commands::save::handle(&conn, text)?;
@@ -33,6 +33,6 @@ fn run() -> Result<()> {
     } else {
         commands::list::handle(&conn)?;
     }
-    
+
     Ok(())
 }
