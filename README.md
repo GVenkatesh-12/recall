@@ -104,13 +104,13 @@ recall
 
 **Output:**
 ```text
-  ✦ RECALL  v1.1.1                                      3 commands
+  ✦ RECALL  v1.2.0                                      3 commands
   ╭─────────────────────────────────────────────────────────────╮
   │   #01  git commit -am "fix: cache invalidation bug"   2h ago│
   │   #02  find . -type f -name '*.log' -size +10M        1h ago│
   │   #03  ssh -i ~/.ssh/id_ed25519 deploy@server       just now│
   ╰─────────────────────────────────────────────────────────────╯
-  • recall <id> copy  •  recall -s add  •  recall -e edit  •  recall -d delete
+  • recall <id> copy  •  recall run <id>  •  recall -l last  •  recall -s add  •  recall -d delete
 ```
 
 ### 2. Save a Command
@@ -125,7 +125,24 @@ recall -s 'git commit -am "fix: cache invalidation bug"'
   ✔ Saved note #3
 ```
 
-### 3. Copy a Command
+### 3. Save Last Command from History
+Use `-l` or `--last` to automatically capture and save the last executed command from your active shell history (`~/.bash_history`, `~/.zsh_history`, `~/.local/share/fish/fish_history`):
+
+```bash
+ffmpeg -i input.mov -vcodec h264 -acodec aac out.mp4
+recall -l
+```
+
+**Output:**
+```text
+  ✔ Saved last command as #4
+
+  ╭── Command #4 ───────────────────────────────────────────────╮
+  │   ffmpeg -i input.mov -vcodec h264 -acodec aac out.mp4      │
+  ╰─────────────────────────────────────────────────────────────╯
+```
+
+### 4. Copy a Command
 Provide the displayed list index to copy its full contents to your clipboard.
 
 ```bash
@@ -141,7 +158,33 @@ recall 1
   ╰─────────────────────────────────────────────────────────────╯
 ```
 
-### 4. Edit a Command
+### 5. Run a Command Directly
+Use `recall run <id>` or `-x` / `--run` to execute a command directly without needing to copy/paste:
+
+```bash
+recall run 1
+```
+
+**Output:**
+```text
+  ╭── Run Command #1 ───────────────────────────────────────────╮
+  │   git commit -am "fix: cache invalidation bug"              │
+  ╰─────────────────────────────────────────────────────────────╯
+
+? Execute command #1? (Y/n) > Y
+  ℹ Running: git commit -am "fix: cache invalidation bug"
+```
+
+#### Skip Confirmation
+Use `-y`, `--yes`, or `-f` to run immediately without confirmation:
+
+```bash
+recall run 1 -y
+# or
+recall -x 1 -y
+```
+
+### 6. Edit a Command
 Use `-e` or `--edit` followed by the displayed list index to edit an existing command interactively.
 
 ```bash
@@ -154,7 +197,7 @@ Edit command: git commit -am "fix: cache invalidation bug"
   ✔ Updated note #1
 ```
 
-### 5. Delete a Note
+### 7. Delete a Note
 Use `-d` or `--delete` followed by the displayed list index. You will be prompted to confirm the deletion.
 
 ```bash
@@ -174,7 +217,7 @@ Use `-f` or `--force` to skip the interactive confirmation prompt:
 recall -d 1 --force
 ```
 
-### 6. Update Recall
+### 8. Update Recall
 Run `recall update` or use `-u` / `--update` to check for and install the latest version from GitHub:
 
 ```bash
@@ -188,11 +231,11 @@ recall -u
   ✦ RECALL UPDATER
   ───────────────────────────────────────────────────────
   ℹ Checking for the latest release on GitHub...
-  ▲ New version available: v1.1.1 (installed: v1.1.0)
+  ▲ New version available: v1.2.0 (installed: v1.1.1)
   ℹ Downloading recall-x86_64-unknown-linux-gnu.tar.gz...
   ✔ SHA-256 checksum verified
-  ✔ Installed recall v1.1.1 to /home/user/.local/bin/recall
-  ✔ Updated recall from v1.1.0 to v1.1.1
+  ✔ Installed recall v1.2.0 to /home/user/.local/bin/recall
+  ✔ Updated recall from v1.1.1 to v1.2.0
   ───────────────────────────────────────────────────────
 ```
 
@@ -202,7 +245,7 @@ If you are already on the latest version:
   ✦ RECALL UPDATER
   ───────────────────────────────────────────────────────
   ℹ Checking for the latest release on GitHub...
-  ✔ recall is already up to date (v1.1.1)
+  ✔ recall is already up to date (v1.2.0)
   ───────────────────────────────────────────────────────
 ```
 

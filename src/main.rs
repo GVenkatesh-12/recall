@@ -34,18 +34,39 @@ fn run() -> Result<()> {
     // Route command execution
     if let Some(ref text) = args.save {
         commands::save::handle(&conn, text)?;
+    } else if args.last {
+        commands::last::handle(&conn)?;
+    } else if let Some(idx) = args.run {
+        commands::run::handle(&conn, idx, args.yes || args.force)?;
     } else if let Some(idx) = args.delete {
         commands::delete::handle(&conn, idx, args.force)?;
     } else if let Some(idx) = args.edit {
         commands::edit::handle(&conn, idx, None)?;
     } else if let Some(ref t) = args.target {
-        match t.parse::<usize>() {
-            Ok(idx) => commands::copy::handle(&conn, idx)?,
-            Err(_) => {
-                ui::print_error(&format!(
-                    "Invalid argument '{}'. Expected a command number (e.g. 'recall 1') or 'recall update'.",
-                    t
-                ));
+        if t == "run" {
+            match args.arg {
+                Some(ref arg) => match arg.parse::<usize>() {
+                    Ok(idx) => commands::run::handle(&conn, idx, args.yes || args.force)?,
+                    Err(_) => {
+                        ui::print_error(&format!(
+                            "Invalid command number '{}' for run. Expected a number (e.g. 'recall run 1').",
+                            arg
+                        ));
+                    }
+                },
+                None => {
+                    ui::print_error("Missing command number for run. Usage: recall run <id>");
+                }
+            }
+        } else {
+            match t.parse::<usize>() {
+                Ok(idx) => commands::copy::handle(&conn, idx)?,
+                Err(_) => {
+                    ui::print_error(&format!(
+                        "Invalid argument '{}'. Expected a command number (e.g. 'recall 1'), 'recall run <id>', or 'recall update'.",
+                        t
+                    ));
+                }
             }
         }
     } else {

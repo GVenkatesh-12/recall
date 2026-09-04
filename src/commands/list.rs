@@ -49,9 +49,21 @@ pub fn handle(conn: &Connection) -> Result<()> {
             "│".dimmed()
         );
         println!(
+            "  {}     {}    Save last command     {}",
+            "│".dimmed(),
+            "recall -l                     ".bright_white(),
+            "│".dimmed()
+        );
+        println!(
             "  {}     {}                     Copy command #1       {}",
             "│".dimmed(),
             "recall 1".bright_white(),
+            "│".dimmed()
+        );
+        println!(
+            "  {}     {}                   Run command #1        {}",
+            "│".dimmed(),
+            "recall run 1".bright_white(),
             "│".dimmed()
         );
         println!(
@@ -136,7 +148,7 @@ pub fn handle(conn: &Connection) -> Result<()> {
     );
     println!(
         "  {}",
-        "• recall <id> copy  •  recall -s add  •  recall -e edit  •  recall -d delete".dimmed()
+        "• recall <id> copy  •  recall run <id>  •  recall -l last  •  recall -s add  •  recall -d delete".dimmed()
     );
     println!();
 
