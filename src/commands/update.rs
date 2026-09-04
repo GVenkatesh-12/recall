@@ -80,10 +80,20 @@ fn fetch_latest_tag() -> Result<String> {
     Ok(tag.to_string())
 }
 
-/// Run `curl -fsSL` and return the response body.
+/// Run `curl` and return the response body.
 fn curl_text(url: &str) -> Result<String> {
     let out = Command::new("curl")
-        .args(["-fsSL", "--retry", "3", "-H", "User-Agent: recall-updater"])
+        .args([
+            "-fsSL",
+            "--connect-timeout",
+            "10",
+            "--max-time",
+            "30",
+            "--retry",
+            "2",
+            "-H",
+            "User-Agent: recall-updater",
+        ])
         .arg(url)
         .output()
         .with_context(|| "Could not run curl. Install curl and try again.")?;
@@ -97,10 +107,22 @@ fn curl_text(url: &str) -> Result<String> {
     Ok(String::from_utf8_lossy(&out.stdout).into_owned())
 }
 
-/// Run `curl -fsSL -o <path> <url>`.
+/// Run `curl` with visual progress bar and timeouts to download asset.
 fn curl_download(url: &str, dest: &Path) -> Result<()> {
     let status = Command::new("curl")
-        .args(["-fsSL", "--retry", "3", "-o"])
+        .args([
+            "-fSL",
+            "--progress-bar",
+            "--connect-timeout",
+            "10",
+            "--max-time",
+            "120",
+            "--retry",
+            "2",
+            "-H",
+            "User-Agent: recall-updater",
+            "-o",
+        ])
         .arg(dest)
         .arg(url)
         .status()
