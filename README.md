@@ -104,7 +104,7 @@ recall
 
 **Output:**
 ```text
-  ✦ RECALL  v1.2.0                                      3 commands
+  ✦ RECALL  v1.2.1                                      3 commands
   ╭─────────────────────────────────────────────────────────────╮
   │   #01  git commit -am "fix: cache invalidation bug"   2h ago│
   │   #02  find . -type f -name '*.log' -size +10M        1h ago│
@@ -141,6 +141,12 @@ recall -l
   │   ffmpeg -i input.mov -vcodec h264 -acodec aac out.mp4      │
   ╰─────────────────────────────────────────────────────────────╯
 ```
+
+> [!TIP]
+> In Bash, command history is buffered in memory by default. To capture commands instantaneously, add this line to your `~/.bashrc`:
+> ```bash
+> eval "$(recall init bash)"
+> ```
 
 ### 4. Copy a Command
 Provide the displayed list index to copy its full contents to your clipboard.
@@ -231,11 +237,11 @@ recall -u
   ✦ RECALL UPDATER
   ───────────────────────────────────────────────────────
   ℹ Checking for the latest release on GitHub...
-  ▲ New version available: v1.2.0 (installed: v1.1.1)
+  ▲ New version available: v1.2.1 (installed: v1.2.0)
   ℹ Downloading recall-x86_64-unknown-linux-gnu.tar.gz...
   ✔ SHA-256 checksum verified
-  ✔ Installed recall v1.2.0 to /home/user/.local/bin/recall
-  ✔ Updated recall from v1.1.1 to v1.2.0
+  ✔ Installed recall v1.2.1 to /home/user/.local/bin/recall
+  ✔ Updated recall from v1.2.0 to v1.2.1
   ───────────────────────────────────────────────────────
 ```
 
@@ -245,7 +251,7 @@ If you are already on the latest version:
   ✦ RECALL UPDATER
   ───────────────────────────────────────────────────────
   ℹ Checking for the latest release on GitHub...
-  ✔ recall is already up to date (v1.2.0)
+  ✔ recall is already up to date (v1.2.1)
   ───────────────────────────────────────────────────────
 ```
 

@@ -28,6 +28,47 @@ fn run() -> Result<()> {
         return commands::update::handle();
     }
 
+    // Handle shell integration hook: 'recall init [bash|zsh|fish]'
+    if args.target.as_deref() == Some("init") {
+        let shell = args.arg.as_deref().unwrap_or("bash");
+        match shell {
+            "zsh" => {
+                println!(
+                    r#"# recall shell integration for zsh
+recall() {{
+    if [ "$1" = "-l" ] || [ "$1" = "--last" ]; then
+        fc -W 2>/dev/null
+    fi
+    RECALL_WRAPPER=1 command recall "$@"
+}}"#
+                );
+            }
+            "fish" => {
+                println!(
+                    r#"# recall shell integration for fish
+function recall
+    if test (count $argv) -gt 0; and test "$argv[1]" = "-l" -o "$argv[1]" = "--last"
+        history save 2>/dev/null
+    end
+    env RECALL_WRAPPER=1 command recall $argv
+end"#
+                );
+            }
+            _ => {
+                println!(
+                    r#"# recall shell integration for bash
+recall() {{
+    if [ "$1" = "-l" ] || [ "$1" = "--last" ]; then
+        builtin history -a 2>/dev/null
+    fi
+    RECALL_WRAPPER=1 command recall "$@"
+}}"#
+                );
+            }
+        }
+        return Ok(());
+    }
+
     // Establish DB connection and run migrations
     let conn = db::init_db()?;
 

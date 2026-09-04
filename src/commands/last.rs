@@ -19,6 +19,16 @@ pub fn handle(conn: &Connection) -> Result<()> {
             println!();
             ui::print_copy_box(&format!("Command #{}", total), trimmed);
             println!();
+
+            let is_bash = std::env::var("SHELL")
+                .map(|s| s.ends_with("bash"))
+                .unwrap_or(false);
+            if is_bash && std::env::var("RECALL_WRAPPER").is_err() {
+                ui::print_info(
+                    "Tip: In Bash, add 'eval \"$(recall init bash)\"' to ~/.bashrc to capture commands instantly.",
+                );
+                println!();
+            }
             Ok(())
         }
         None => {
@@ -179,6 +189,8 @@ pub fn is_recall_command(cmd: &str) -> bool {
     first_word == "recall"
         || first_word.ends_with("/recall")
         || trimmed.starts_with("cargo run")
+        || trimmed.starts_with("history")
+        || trimmed.starts_with("builtin history")
         || trimmed == "clear"
 }
 
@@ -195,6 +207,9 @@ mod tests {
         assert!(is_recall_command("/home/user/.local/bin/recall run 2"));
         assert!(is_recall_command("cargo run -- -l"));
         assert!(is_recall_command("clear"));
+        assert!(is_recall_command("history"));
+        assert!(is_recall_command("history -a"));
+        assert!(is_recall_command("builtin history -a"));
 
         assert!(!is_recall_command("git status"));
         assert!(!is_recall_command("docker compose up -d"));

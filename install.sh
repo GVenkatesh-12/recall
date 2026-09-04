@@ -167,6 +167,12 @@ main() {
     if [ -x "${install_dir}/recall" ]; then
         say "Done! Run '${install_dir}/recall --version' to verify."
     fi
+
+    # Configure shell integration for instant 'recall -l' capture
+    if [ -f "$HOME/.bashrc" ] && ! grep -q "recall()" "$HOME/.bashrc"; then
+        printf "\n# recall shell integration: automatically sync history on 'recall -l'\nrecall() {\n    if [ \"\$1\" = \"-l\" ] || [ \"\$1\" = \"--last\" ]; then\n        builtin history -a 2>/dev/null\n    fi\n    RECALL_WRAPPER=1 command recall \"\$@\"\n}\n" >> "$HOME/.bashrc"
+        say "Added shell integration to ~/.bashrc"
+    fi
 }
 
 main "$@"
