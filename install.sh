@@ -62,7 +62,7 @@ resolve_version() {
     if [ "$RECALL_VERSION" = "latest" ]; then
         need_cmd curl
         local tag
-        tag="$(curl -fsSL "https://api.github.com/repos/${RECALL_OWNER}/${RECALL_REPO}/releases/latest" | sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' | head -n1)"
+        tag="$(curl -fsSL -H "User-Agent: recall-installer" "https://api.github.com/repos/${RECALL_OWNER}/${RECALL_REPO}/releases/latest" | sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' | head -n1)"
         [ -n "$tag" ] || die "could not determine the latest release tag for ${RECALL_OWNER}/${RECALL_REPO}"
         echo "$tag"
     else
