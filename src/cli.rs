@@ -5,7 +5,7 @@ use clap::Parser;
     name = "recall",
     version,
     about = "A modern terminal command memory and clipboard utility",
-    long_about = "Recall is a minimal CLI command memory tool. It stores the terminal commands you want to remember in a local SQLite database, lists them ordered by recency, and allows copying, editing, or deleting commands by their displayed index number.",
+    long_about = "Recall is a minimal CLI command memory tool. It stores the terminal commands you want to remember in a local SQLite database, lists them in chronological order, and allows copying, editing, or deleting commands by their displayed index number.",
     group = clap::ArgGroup::new("action").multiple(false)
 )]
 pub struct Cli {

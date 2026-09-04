@@ -43,10 +43,10 @@ pub fn save_note(conn: &Connection, content: &str) -> Result<i64> {
     Ok(conn.last_insert_rowid())
 }
 
-/// List all notes in the database sorted by id DESC (most recent first)
+/// List all notes in the database sorted by id ASC (chronological order)
 pub fn list_notes(conn: &Connection) -> Result<Vec<Note>> {
     let mut stmt = conn
-        .prepare("SELECT id, content, created_at FROM notes ORDER BY id DESC")
+        .prepare("SELECT id, content, created_at FROM notes ORDER BY id ASC")
         .context("Failed to prepare select query")?;
 
     let note_iter = stmt
@@ -66,10 +66,10 @@ pub fn list_notes(conn: &Connection) -> Result<Vec<Note>> {
     Ok(notes)
 }
 
-/// Retrieve a note by its 0-based offset from the DESC sorted list of notes
+/// Retrieve a note by its 0-based offset from the ASC sorted list of notes
 pub fn get_note_by_offset(conn: &Connection, offset: usize) -> Result<Option<Note>> {
     let mut stmt = conn
-        .prepare("SELECT id, content, created_at FROM notes ORDER BY id DESC LIMIT 1 OFFSET ?1")
+        .prepare("SELECT id, content, created_at FROM notes ORDER BY id ASC LIMIT 1 OFFSET ?1")
         .context("Failed to prepare offset select query")?;
 
     let mut note_iter = stmt
@@ -157,8 +157,8 @@ mod tests {
 
         let notes = list_notes(&conn)?;
         assert_eq!(notes.len(), 2);
-        assert_eq!(notes[0].content, "Second note"); // DESC order
-        assert_eq!(notes[1].content, "First note");
+        assert_eq!(notes[0].content, "First note"); // ASC order
+        assert_eq!(notes[1].content, "Second note");
 
         Ok(())
     }
@@ -172,7 +172,7 @@ mod tests {
 
         let note0 = get_note_by_offset(&conn, 0)?;
         assert!(note0.is_some());
-        assert_eq!(note0.unwrap().content, "Newest");
+        assert_eq!(note0.unwrap().content, "Oldest");
 
         let note1 = get_note_by_offset(&conn, 1)?;
         assert!(note1.is_some());
@@ -180,7 +180,7 @@ mod tests {
 
         let note2 = get_note_by_offset(&conn, 2)?;
         assert!(note2.is_some());
-        assert_eq!(note2.unwrap().content, "Oldest");
+        assert_eq!(note2.unwrap().content, "Newest");
 
         let note3 = get_note_by_offset(&conn, 3)?;
         assert!(note3.is_none());
