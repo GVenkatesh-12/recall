@@ -105,6 +105,28 @@ pub fn delete_note_by_id(conn: &Connection, id: i64) -> Result<()> {
         anyhow::bail!("Note with ID {} does not exist", id);
     }
 
+    // If no notes remain, reset sqlite_sequence so autoincrement restarts from 1
+    let remaining: i64 = conn.query_row("SELECT COUNT(*) FROM notes", [], |row| row.get(0))?;
+    if remaining == 0 {
+        let _ = conn.execute("DELETE FROM sqlite_sequence WHERE name = 'notes'", []);
+    }
+
+    Ok(())
+}
+
+/// Update the content of an existing note by its unique database ID
+pub fn update_note_content(conn: &Connection, id: i64, new_content: &str) -> Result<()> {
+    let rows_affected = conn
+        .execute(
+            "UPDATE notes SET content = ?1 WHERE id = ?2",
+            rusqlite::params![new_content, id],
+        )
+        .context("Failed to update note in database")?;
+
+    if rows_affected == 0 {
+        anyhow::bail!("Note with ID {} does not exist", id);
+    }
+
     Ok(())
 }
 
@@ -208,6 +230,31 @@ mod tests {
         assert!(get_note_by_offset(&conn, 0)?.is_some());
         delete_note_by_id(&conn, id)?;
         assert!(get_note_by_offset(&conn, 0)?.is_none());
+        Ok(())
+    }
+
+    #[test]
+    fn test_update() -> Result<()> {
+        let conn = init_in_memory_db()?;
+        let id = save_note(&conn, "Original content")?;
+        update_note_content(&conn, id, "Updated content")?;
+
+        let note = get_note_by_offset(&conn, 0)?.expect("Note should exist");
+        assert_eq!(note.content, "Updated content");
+        assert_eq!(note.id, id);
+        Ok(())
+    }
+
+    #[test]
+    fn test_delete_all_resets_sequence() -> Result<()> {
+        let conn = init_in_memory_db()?;
+        let id1 = save_note(&conn, "First")?;
+        delete_note_by_id(&conn, id1)?;
+        assert_eq!(count_notes(&conn)?, 0);
+
+        // Next inserted note after empty table should get id 1 because sequence was cleared
+        let id2 = save_note(&conn, "Fresh start")?;
+        assert_eq!(id2, 1);
         Ok(())
     }
 }

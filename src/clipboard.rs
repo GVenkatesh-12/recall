@@ -8,5 +8,9 @@ pub fn copy_to_clipboard(text: &str) -> Result<()> {
     clipboard
         .set_text(text.to_string())
         .context("Failed to write text to system clipboard.")?;
+
+    #[cfg(target_os = "linux")]
+    std::thread::sleep(std::time::Duration::from_millis(50));
+
     Ok(())
 }

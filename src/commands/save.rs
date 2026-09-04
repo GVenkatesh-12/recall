@@ -12,6 +12,6 @@ pub fn handle(conn: &Connection, content: &str) -> Result<()> {
 
     db::save_note(conn, trimmed)?;
     let total = db::count_notes(conn)?;
-    ui::print_success(&format!("Saved note #{}", total));
+    ui::print_success(&format!("Saved note as #1 ({} total)", total));
     Ok(())
 }

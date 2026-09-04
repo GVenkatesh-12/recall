@@ -104,15 +104,13 @@ recall
 
 **Output:**
 ```text
- Recall Notes
- ──────────────────────────────────────────────────
-
- 1  ssh -i ~/.ssh/id_ed25519 deploy@server
- 2  find . -type f -name '*.log' -size +10M
- 3  git commit -am "fix: cache invalidation bug"
-
- ──────────────────────────────────────────────────
- Total: 3 notes
+  ✦ RECALL  v1.1.0                                      3 commands
+  ╭─────────────────────────────────────────────────────────────╮
+  │   #01  git commit -am "fix: cache invalidation bug" just now│
+  │   #02  find . -type f -name '*.log' -size +10M        2h ago│
+  │   #03  ssh -i ~/.ssh/id_ed25519 deploy@server         3d ago│
+  ╰─────────────────────────────────────────────────────────────╯
+  • recall <id> copy  •  recall -s add  •  recall -e edit  •  recall -d delete
 ```
 
 ### 2. Save a Command
@@ -124,42 +122,92 @@ recall -s 'git commit -am "fix: cache invalidation bug"'
 
 **Output:**
 ```text
-✓ Saved note #3
+  ✔ Saved note as #1 (3 total)
 ```
 
 ### 3. Copy a Command
 Provide the displayed list index to copy its full contents to your clipboard.
 
 ```bash
-recall 3
+recall 1
 ```
 
 **Output:**
 ```text
-✓ Copied to clipboard
+  ✔ Copied command #1 to clipboard
 
-git commit -am "fix: cache invalidation bug"
+  ╭── Command #1 ───────────────────────────────────────────────╮
+  │   git commit -am "fix: cache invalidation bug"              │
+  ╰─────────────────────────────────────────────────────────────╯
 ```
 
-### 4. Delete a Note
+### 4. Edit a Command
+Use `-e` or `--edit` followed by the displayed list index to edit an existing command interactively.
+
+```bash
+recall -e 1
+```
+
+**Output:**
+```text
+Edit command: git commit -am "fix: cache invalidation bug"
+  ✔ Updated note #1
+```
+
+### 5. Delete a Note
 Use `-d` or `--delete` followed by the displayed list index. You will be prompted to confirm the deletion.
 
 ```bash
-recall -d 3
+recall -d 1
 ```
 
 **Output:**
 ```text
 Delete this note? [y/N] y
-✓ Deleted note #3
+  ✔ Deleted note #1 (2 remaining)
 ```
 
 #### Skip Confirmation
 Use `-f` or `--force` to skip the interactive confirmation prompt:
 
 ```bash
-recall -d 3 --force
+recall -d 1 --force
 ```
+
+### 6. Update Recall
+Run `recall update` or use `-u` / `--update` to check for and install the latest version from GitHub:
+
+```bash
+recall update
+# or
+recall -u
+```
+
+**Output:**
+```text
+  ✦ RECALL UPDATER
+  ───────────────────────────────────────────────────────
+  ℹ Checking for the latest release on GitHub...
+  ▲ New version available: v1.1.0 (installed: v1.0.2)
+  ℹ Downloading recall-x86_64-unknown-linux-gnu.tar.gz...
+  ✔ SHA-256 checksum verified
+  ✔ Installed recall v1.1.0 to /home/user/.local/bin/recall
+  ✔ Updated recall from v1.0.2 to v1.1.0
+  ───────────────────────────────────────────────────────
+```
+
+If you are already on the latest version:
+
+```text
+  ✦ RECALL UPDATER
+  ───────────────────────────────────────────────────────
+  ℹ Checking for the latest release on GitHub...
+  ✔ recall is already up to date (v1.1.0)
+  ───────────────────────────────────────────────────────
+```
+
+`recall update` replaces the running binary in place; if the current install directory
+is not writable it installs the update to `~/.local/bin/recall` instead.
 
 ---
 

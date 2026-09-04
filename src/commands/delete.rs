@@ -27,9 +27,13 @@ pub fn handle(conn: &Connection, index: usize, force: bool) -> Result<()> {
 
             if should_delete {
                 db::delete_note_by_id(conn, note.id)?;
-                ui::print_success(&format!("Deleted note #{}", index));
+                let remaining = db::count_notes(conn)?;
+                ui::print_success(&format!(
+                    "Deleted note #{} ({} remaining)",
+                    index, remaining
+                ));
             } else {
-                println!("Deletion cancelled.");
+                ui::print_warning("Deletion cancelled.");
             }
         }
         None => {

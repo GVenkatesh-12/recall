@@ -195,37 +195,42 @@
         <span style="color:var(--fg-dim)">  # list saved commands (most recent first)</span></p>
       <p><code>recall -s 'git commit -am "fix: cache bug"'</code>
         <span style="color:var(--fg-dim)">  # remember a command</span></p>
-      <p><code>recall 2</code>
-        <span style="color:var(--fg-dim)">  # copy command #2 to the clipboard</span></p>
-      <p><code>recall -d 2</code>
-        <span style="color:var(--fg-dim)">  # delete command #2 (with confirmation)</span></p>
-      <p><code>recall -d 2 --force</code>
+      <p><code>recall 1</code>
+        <span style="color:var(--fg-dim)">  # copy command #1 to clipboard</span></p>
+      <p><code>recall -e 1</code>
+        <span style="color:var(--fg-dim)">  # edit command #1 interactively</span></p>
+      <p><code>recall -d 1</code>
+        <span style="color:var(--fg-dim)">  # delete command #1 (with confirmation)</span></p>
+      <p><code>recall -d 1 --force</code>
         <span style="color:var(--fg-dim)">  # delete without confirmation</span></p>
+      <p><code>recall update</code>
+        <span style="color:var(--fg-dim)">  # self-update to the latest version</span></p>
     </div>
 
     <span class="term">
       <span class="title">~/dev — zsh — 80×24</span>
 <pre><span class="dim">$</span> recall -s <span class="pk">'git commit -am "fix: cache invalidation bug"'</span>
-<span class="c">✓ Saved note #1</span>
+  <span class="c">✔ Saved note as #1 (1 total)</span>
 
 <span class="dim">$</span> recall -s <span class="pk">'find . -type f -name "*.log" | xargs wc -l'</span>
-<span class="c">✓ Saved note #2</span>
+  <span class="c">✔ Saved note as #1 (2 total)</span>
 
 <span class="dim">$</span> recall
 
- <span class="pk">Recall Notes</span>
- <span class="dim">──────────────────────────────────────────────────</span>
+  <span class="pk">✦ RECALL</span>  <span class="dim">v1.1.0</span>                                      <span class="pk">2 commands</span>
+  <span class="dim">╭─────────────────────────────────────────────────────────────╮</span>
+  <span class="dim">│</span>   <span class="pk">#01</span>  find . -type f -name "*.log" | xargs wc -l   <span class="dim">just now</span>  <span class="dim">│</span>
+  <span class="dim">│</span>   <span class="pk">#02</span>  git commit -am "fix: cache invalidation bug"   <span class="dim">1m ago</span>  <span class="dim">│</span>
+  <span class="dim">╰─────────────────────────────────────────────────────────────╯</span>
+  <span class="dim">• recall &lt;id&gt; copy  •  recall -s add  •  recall -e edit  •  recall -d delete</span>
 
- <span class="pk">1</span>  find . -type f -name "*.log" | xargs wc -l
- <span class="pk">2</span>  git commit -am "fix: cache invalidation bug"
+<span class="dim">$</span> recall 1
 
- <span class="dim">──────────────────────────────────────────────────</span>
- Total: 2 notes
+  <span class="c">✔ Copied command #1 to clipboard</span>
 
-<span class="dim">$</span> recall 2
-<span class="c">✓ Copied to clipboard</span>
-
-git commit -am "fix: cache invalidation bug"</pre>
+  <span class="dim">╭──</span> <span class="pk">Command #1</span> <span class="dim">───────────────────────────────────────────────╮</span>
+  <span class="dim">│</span>   find . -type f -name "*.log" | xargs wc -l                <span class="dim">│</span>
+  <span class="dim">╰─────────────────────────────────────────────────────────────╯</span></pre>
     </span>
   </section>
 </main>

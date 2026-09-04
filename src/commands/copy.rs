@@ -18,8 +18,11 @@ pub fn handle(conn: &Connection, index: usize) -> Result<()> {
         Some(note) => {
             clipboard::copy_to_clipboard(&note.content).context("Clipboard operation failed")?;
 
-            ui::print_success("Copied to clipboard\n");
-            println!("{}", note.content);
+            println!();
+            ui::print_success(&format!("Copied command #{} to clipboard", index));
+            println!();
+            ui::print_copy_box(&format!("Command #{}", index), &note.content);
+            println!();
         }
         None => {
             ui::print_error(&format!("Note #{} does not exist", index));

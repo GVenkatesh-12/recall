@@ -4,8 +4,8 @@ use clap::Parser;
 #[command(
     name = "recall",
     version,
-    about = "A lightweight CLI terminal command memory and clipboard utility",
-    long_about = "Recall is a minimal CLI command memory tool. It stores the terminal commands you want to remember in a local SQLite database, lists them ordered by recency, and allows copying or deleting commands by their displayed index number.",
+    about = "A modern terminal command memory and clipboard utility",
+    long_about = "Recall is a minimal CLI command memory tool. It stores the terminal commands you want to remember in a local SQLite database, lists them ordered by recency, and allows copying, editing, or deleting commands by their displayed index number.",
     group = clap::ArgGroup::new("action").multiple(false)
 )]
 pub struct Cli {
@@ -38,13 +38,32 @@ pub struct Cli {
     )]
     pub force: bool,
 
-    /// Copy a command to clipboard by its displayed index (1-based)
+    /// Edit a command by its displayed index
     #[arg(
+        short,
+        long,
         value_name = "INDEX",
-        help = "Copy the contents of a command to the clipboard by its displayed list number",
+        help = "Edit an existing command by its displayed list number",
         group = "action"
     )]
-    pub copy: Option<usize>,
+    pub edit: Option<usize>,
+
+    /// Update recall to the latest version from GitHub
+    #[arg(
+        short,
+        long,
+        help = "Update recall to the latest version from GitHub",
+        group = "action"
+    )]
+    pub update: bool,
+
+    /// Copy a command to clipboard by its displayed index (1-based), or 'update'
+    #[arg(
+        value_name = "INDEX",
+        help = "Copy command to clipboard by list number (e.g. 1), or 'update'",
+        group = "action"
+    )]
+    pub target: Option<String>,
 }
 
 impl Cli {

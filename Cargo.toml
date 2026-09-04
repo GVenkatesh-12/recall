@@ -1,6 +1,6 @@
 [package]
 name = "recall"
-version = "1.0.2"
+version = "1.1.0"
 edition = "2024"
 authors = ["Gopinath Venkatesh <gvenkatesh@example.com>"]
 description = "A lightweight CLI terminal command memory and clipboard utility."
@@ -19,6 +19,12 @@ dirs = "5.0"
 colored = "2.1"
 anyhow = "1.0"
 inquire = "0.7"
+# used by `recall update`
+flate2 = "1"
+tar = "0.4"
+sha2 = "0.10"
+serde_json = "1"
+zip = { version = "2", default-features = false, features = ["deflate", "deflate64"] }
 
 [profile.release]
 lto = "thin"

@@ -20,6 +20,17 @@ fn run() -> Result<()> {
     // Parse CLI arguments
     let args = Cli::parse_args();
 
+    // Check if user requested self-update via --update or 'recall update'
+    let is_update = args.update
+        || match args.target.as_deref() {
+            Some("update") | Some("self-update") => true,
+            _ => false,
+        };
+
+    if is_update {
+        return commands::update::handle();
+    }
+
     // Establish DB connection and run migrations
     let conn = db::init_db()?;
 
@@ -28,8 +39,18 @@ fn run() -> Result<()> {
         commands::save::handle(&conn, text)?;
     } else if let Some(idx) = args.delete {
         commands::delete::handle(&conn, idx, args.force)?;
-    } else if let Some(idx) = args.copy {
-        commands::copy::handle(&conn, idx)?;
+    } else if let Some(idx) = args.edit {
+        commands::edit::handle(&conn, idx, None)?;
+    } else if let Some(ref t) = args.target {
+        match t.parse::<usize>() {
+            Ok(idx) => commands::copy::handle(&conn, idx)?,
+            Err(_) => {
+                ui::print_error(&format!(
+                    "Invalid argument '{}'. Expected a command number (e.g. 'recall 1') or 'recall update'.",
+                    t
+                ));
+            }
+        }
     } else {
         commands::list::handle(&conn)?;
     }
