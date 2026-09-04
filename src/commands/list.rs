@@ -20,14 +20,22 @@ pub fn handle(conn: &Connection) -> Result<()> {
             "  {}",
             "╭─────────────────────────────────────────────────────────────╮".dimmed()
         );
-        println!("  {}                                                             {}", "│".dimmed(), "│".dimmed());
+        println!(
+            "  {}                                                             {}",
+            "│".dimmed(),
+            "│".dimmed()
+        );
         println!(
             "  {}   {}                             {}",
             "│".dimmed(),
             "No commands stored yet.".bright_white().bold(),
             "│".dimmed()
         );
-        println!("  {}                                                             {}", "│".dimmed(), "│".dimmed());
+        println!(
+            "  {}                                                             {}",
+            "│".dimmed(),
+            "│".dimmed()
+        );
         println!(
             "  {}   {}                                               {}",
             "│".dimmed(),
@@ -58,7 +66,11 @@ pub fn handle(conn: &Connection) -> Result<()> {
             "recall update".bright_white(),
             "│".dimmed()
         );
-        println!("  {}                                                             {}", "│".dimmed(), "│".dimmed());
+        println!(
+            "  {}                                                             {}",
+            "│".dimmed(),
+            "│".dimmed()
+        );
         println!(
             "  {}",
             "╰─────────────────────────────────────────────────────────────╯".dimmed()

@@ -67,24 +67,25 @@ pub fn print_copy_box(title: &str, content: &str) {
 
 /// Parse SQLite CURRENT_TIMESTAMP ("YYYY-MM-DD HH:MM:SS" UTC) and return a friendly relative time
 pub fn format_relative_time(created_at: &str) -> String {
-    if let Some(sec) = parse_utc_timestamp(created_at) {
-        if let Ok(now) = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
-            let now_sec = now.as_secs();
-            if now_sec >= sec {
-                let diff = now_sec - sec;
-                if diff < 60 {
-                    return "just now".to_string();
-                } else if diff < 3600 {
-                    return format!("{}m ago", diff / 60);
-                } else if diff < 86400 {
-                    return format!("{}h ago", diff / 3600);
-                } else if diff < 86400 * 30 {
-                    return format!("{}d ago", diff / 86400);
-                } else if diff < 86400 * 365 {
-                    return format!("{}mo ago", diff / (86400 * 30));
-                } else {
-                    return format!("{}y ago", diff / (86400 * 365));
-                }
+    if let (Some(sec), Ok(now)) = (
+        parse_utc_timestamp(created_at),
+        std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH),
+    ) {
+        let now_sec = now.as_secs();
+        if now_sec >= sec {
+            let diff = now_sec - sec;
+            if diff < 60 {
+                return "just now".to_string();
+            } else if diff < 3600 {
+                return format!("{}m ago", diff / 60);
+            } else if diff < 86400 {
+                return format!("{}h ago", diff / 3600);
+            } else if diff < 86400 * 30 {
+                return format!("{}d ago", diff / 86400);
+            } else if diff < 86400 * 365 {
+                return format!("{}mo ago", diff / (86400 * 30));
+            } else {
+                return format!("{}y ago", diff / (86400 * 365));
             }
         }
     }
@@ -123,7 +124,7 @@ fn parse_utc_timestamp(s: &str) -> Option<u64> {
 }
 
 fn days_from_civil(mut y: i64, m: u32, d: u32) -> Option<i64> {
-    if m < 1 || m > 12 || d < 1 || d > 31 {
+    if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
         return None;
     }
     y -= (m <= 2) as i64;

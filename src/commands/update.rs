@@ -1,4 +1,4 @@
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use std::cmp::Ordering;
 use std::env;
 use std::fs;
@@ -8,10 +8,8 @@ use std::process::Command;
 
 use crate::ui;
 
-const RELEASE_DOWNLOAD_URL: &str =
-    "https://github.com/GVenkatesh-12/recall/releases/download";
-const LATEST_API_URL: &str =
-    "https://api.github.com/repos/GVenkatesh-12/recall/releases/latest";
+const RELEASE_DOWNLOAD_URL: &str = "https://github.com/GVenkatesh-12/recall/releases/download";
+const LATEST_API_URL: &str = "https://api.github.com/repos/GVenkatesh-12/recall/releases/latest";
 
 /// Compile-time target triple. Must match the asset names published by the
 /// release workflow (`.github/workflows/release.yml`).
@@ -60,7 +58,9 @@ pub fn handle() -> Result<()> {
             ));
             download_and_install(&latest)?;
             ui::print_success(&format!("Updated recall from v{} to {}", current, latest));
-            ui::print_info("Run 'hash -r' (or restart your shell) to use the new binary in this session.");
+            ui::print_info(
+                "Run 'hash -r' (or restart your shell) to use the new binary in this session.",
+            );
         }
     }
     println!("  {}", "─".repeat(55).dimmed());
@@ -70,7 +70,7 @@ pub fn handle() -> Result<()> {
 
 /// Query the GitHub API for the tag of the latest release.
 fn fetch_latest_tag() -> Result<String> {
-    let body = curl_text(&LATEST_API_URL)?;
+    let body = curl_text(LATEST_API_URL)?;
     let value: serde_json::Value =
         serde_json::from_str(&body).with_context(|| "Failed to parse GitHub API response")?;
     let tag = value
@@ -218,10 +218,10 @@ fn extract_tar_gz_binary(path: &Path) -> Result<Vec<u8>> {
     let file = fs::File::open(path).with_context(|| "Failed to open downloaded archive")?;
     let decoder = flate2::read::GzDecoder::new(file);
     let mut archive = tar::Archive::new(decoder);
-    let mut entries = archive
+    let entries = archive
         .entries()
         .with_context(|| "Failed to read archive entries")?;
-    while let Some(entry) = entries.next() {
+    for entry in entries {
         let mut entry = entry.with_context(|| "Failed to read archive entry")?;
         let name = entry
             .path()
@@ -268,7 +268,12 @@ fn unique_temp_dir() -> Result<PathBuf> {
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap_or_default()
         .as_nanos();
-    let dir = env::temp_dir().join(format!("recall-update-{}-{}-{}", std::process::id(), now, count));
+    let dir = env::temp_dir().join(format!(
+        "recall-update-{}-{}-{}",
+        std::process::id(),
+        now,
+        count
+    ));
     fs::create_dir_all(&dir)?;
     Ok(dir)
 }
@@ -299,7 +304,8 @@ fn set_executable(_path: &Path) -> Result<()> {
 /// Replace the running binary in place. If its directory is not writable,
 /// install to `~/.local/bin/recall` instead.
 fn install_binary(bytes: &[u8]) -> Result<PathBuf> {
-    let current = env::current_exe().with_context(|| "Could not determine current executable path")?;
+    let current =
+        env::current_exe().with_context(|| "Could not determine current executable path")?;
     let current_dir = current
         .parent()
         .with_context(|| "Could not determine current executable directory")?
@@ -354,8 +360,14 @@ mod tests {
 
     #[test]
     fn test_compare_versions() {
-        assert_eq!(compare_versions("v1.1.0", "1.0.2").unwrap(), Ordering::Greater);
-        assert_eq!(compare_versions("v1.0.2", "1.0.2").unwrap(), Ordering::Equal);
+        assert_eq!(
+            compare_versions("v1.1.0", "1.0.2").unwrap(),
+            Ordering::Greater
+        );
+        assert_eq!(
+            compare_versions("v1.0.2", "1.0.2").unwrap(),
+            Ordering::Equal
+        );
         assert_eq!(compare_versions("v1.2.0", "2.0.0").unwrap(), Ordering::Less);
         assert_eq!(parse_version("v1.2.3"), (1, 2, 3));
         assert_eq!(parse_version("1.0"), (1, 0, 0));

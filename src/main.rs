@@ -21,11 +21,8 @@ fn run() -> Result<()> {
     let args = Cli::parse_args();
 
     // Check if user requested self-update via --update or 'recall update'
-    let is_update = args.update
-        || match args.target.as_deref() {
-            Some("update") | Some("self-update") => true,
-            _ => false,
-        };
+    let is_update =
+        args.update || matches!(args.target.as_deref(), Some("update") | Some("self-update"));
 
     if is_update {
         return commands::update::handle();
